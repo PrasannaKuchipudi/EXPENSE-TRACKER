@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Transaction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/delete_transaction.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Delete Transaction</h1>
+  </header>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <p>Are you sure you want to delete this transaction?</p>
+    <p><strong>{{ transaction['title'] }} - ₹{{ transaction['amount'] }} ({{ transaction['type']|capitalize }})</strong></p>
+
+    <form method="POST" action="{{ url_for('delete_transaction', id=transaction['id']) }}">
+      <button type="submit" class="confirm">Yes, Delete</button>
+      <a href="{{ url_for('dashboard') }}" class="cancel">Cancel</a>
+    </form>
+  </div>
+</body>
+</html>

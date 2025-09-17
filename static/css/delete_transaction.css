@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #ff6b81;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 25px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+p {
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+button.confirm {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button.confirm:hover { background-color: #b02a37; }
+
+a.cancel {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+a.cancel:hover { background-color: #5a6268; }
+
+/* Flash messages */
+.flash {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.flash.success { background-color: #d4edda; color: #155724; }
+.flash.danger { background-color: #f8d7da; color: #721c24; }
+.flash.info { background-color: #cce5ff; color: #004085; }

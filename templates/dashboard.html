@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker - Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Expense Tracker Dashboard</h1>
+    <div class="top-links">
+      <a href="{{ url_for('profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Summary Cards -->
+<div class="summary">
+  <div class="card">
+    <h3>Total Balance</h3>
+    <p>₹ {{ total_balance }}</p>
+  </div>
+  <div class="card income">
+    <h3>Income</h3>
+    <p>₹ {{ total_income }}</p>
+  </div>
+  <div class="card expense">
+    <h3>Expenses</h3>
+    <p>₹ {{ total_expense }}</p>
+  </div>
+</div>
+
+
+    <!-- Add Transaction Form -->
+    <div class="add-transaction">
+      <h2>Add Transaction</h2>
+      <form method="POST" action="{{ url_for('add_transaction') }}">
+        <input type="text" name="title" placeholder="Title (e.g., Grocery)" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <select name="type" required>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <input type="date" name="date" required>
+        <button type="submit">Add Transaction</button>
+      </form>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <h2>Recent Transactions</h2>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+      {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.title }}</td>
+        <td>₹ {{ transaction.amount }}</td>
+        <td>{{ transaction.type.capitalize() }}</td>
+        <td>{{ transaction.date }}</td>
+        <td>
+          <a href="{{ url_for('edit_transaction', id=transaction.id) }}">Edit</a> |
+          <a href="{{ url_for('delete_transaction', id=transaction.id) }}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+  </div>
+</body>
+</html>

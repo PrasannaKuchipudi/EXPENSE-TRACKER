@@ -1,0 +1,108 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #ff6b81;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+}
+
+.top-links {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.top-links a {
+    color: white;
+    margin-left: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card.income { border-top: 4px solid #28a745; }
+.card.expense { border-top: 4px solid #dc3545; }
+
+.add-transaction {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.add-transaction form input,
+.add-transaction form select {
+    width: calc(33% - 10px);
+    margin: 5px;
+    padding: 10px;
+}
+
+.add-transaction form button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff6b81;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-transaction form button:hover {
+    background-color: #e0556e;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table tr:hover { background-color: #f1f1f1; }
+
+.flash {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.flash.success { background-color: #d4edda; color: #155724; }
+.flash.danger { background-color: #f8d7da; color: #721c24; }
+.flash.info { background-color: #cce5ff; color: #004085; }
