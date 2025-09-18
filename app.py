@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Environment Variables
 # -------------------------
 MONGO_URI = os.environ.get("MONGO_URI")  # Set in Render dashboard
-
+SECRET_KEY = os.environ.get("SECRET_KEY")  # Set in Render dashboard
 
 if not MONGO_URI or not SECRET_KEY:
     raise ValueError("Please set MONGO_URI and SECRET_KEY environment variables!")
@@ -193,3 +193,4 @@ def logout():
 # -------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
