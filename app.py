@@ -8,11 +8,14 @@ app = Flask(__name__)
 # -------------------------
 # Environment Variables
 # -------------------------
-MONGO_URI = os.environ.get("MONGO_URI")  # Set in Render dashboard
-SECRET_KEY = os.environ.get("SECRET_KEY")  # Set in Render dashboard
+MONGO_URI = os.environ.get("MONGO_URI")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 if not MONGO_URI or not SECRET_KEY:
-    raise ValueError("Please set MONGO_URI and SECRET_KEY environment variables!")
+    print("⚠️ Warning: Missing MONGO_URI or SECRET_KEY environment variables. Using defaults for development.")
+    # Local/dev fallback (not for production!)
+    MONGO_URI = "mongodb://localhost:27017/testdb"
+    SECRET_KEY = "dev_secret_key"
 
 app.secret_key = SECRET_KEY
 
@@ -193,4 +196,3 @@ def logout():
 # -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
