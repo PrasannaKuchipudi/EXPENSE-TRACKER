@@ -24,7 +24,7 @@ app.secret_key = SECRET_KEY
 # MongoDB Connection
 # -------------------------
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
     # Get DB from URI (better than hardcoding)
     db_name = MONGO_URI.rsplit("/", 1)[-1].split("?")[0] or "expense_tracker"
     db = client[db_name]
