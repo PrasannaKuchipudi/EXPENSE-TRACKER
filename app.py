@@ -24,8 +24,9 @@ app.secret_key = SECRET_KEY
 # MongoDB Connection
 # -------------------------
 try:
+    # Atlas requires TLS
     client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
-    # Get DB from URI (better than hardcoding)
+    # Get DB name from URI, default = "expense_tracker"
     db_name = MONGO_URI.rsplit("/", 1)[-1].split("?")[0] or "expense_tracker"
     db = client[db_name]
     client.admin.command("ping")  # test connection
@@ -34,8 +35,10 @@ except Exception as e:
     print("❌ MongoDB connection failed:", e, file=sys.stderr)
     db = None
 
-users_collection = db['users'] if db else None
-transactions_collection = db['transactions'] if db else None
+# Collections (safe fallback if DB fails)
+users_collection = db["users"] if db else None
+transactions_collection = db["transactions"] if db else None
+
 
 # -------------------------
 # Routes
@@ -49,6 +52,10 @@ def home():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
+        if not users_collection:
+            flash("Database not available. Try again later.", "danger")
+            return redirect(url_for("signup"))
+
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
@@ -70,6 +77,10 @@ def signup():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        if not users_collection:
+            flash("Database not available. Try again later.", "danger")
+            return redirect(url_for("login"))
+
         email = request.form["email"]
         password = request.form["password"]
 
@@ -88,6 +99,10 @@ def login():
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    if not transactions_collection:
+        flash("Database not available. Try again later.", "danger")
         return redirect(url_for("login"))
 
     transactions = list(transactions_collection.find({"user_id": session["user_id"]}))
@@ -109,6 +124,10 @@ def dashboard():
 def add_transaction():
     if "user_id" not in session:
         return redirect(url_for("login"))
+
+    if not transactions_collection:
+        flash("Database not available. Try again later.", "danger")
+        return redirect(url_for("dashboard"))
 
     if request.method == "POST":
         title = request.form["title"]
@@ -133,6 +152,10 @@ def add_transaction():
 def edit_transaction(id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+
+    if not transactions_collection:
+        flash("Database not available. Try again later.", "danger")
+        return redirect(url_for("dashboard"))
 
     transaction = transactions_collection.find_one({"_id": ObjectId(id), "user_id": session["user_id"]})
     if not transaction:
@@ -160,6 +183,10 @@ def delete_transaction(id):
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    if not transactions_collection:
+        flash("Database not available. Try again later.", "danger")
+        return redirect(url_for("dashboard"))
+
     transaction = transactions_collection.find_one({"_id": ObjectId(id), "user_id": session["user_id"]})
     if not transaction:
         flash("Transaction not found!", "danger")
@@ -177,6 +204,10 @@ def delete_transaction(id):
 def profile():
     if "user_id" not in session:
         return redirect(url_for("login"))
+
+    if not users_collection:
+        flash("Database not available. Try again later.", "danger")
+        return redirect(url_for("dashboard"))
 
     user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
 
