@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
+import sys
 
 app = Flask(__name__)
 
@@ -12,8 +13,8 @@ MONGO_URI = os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 if not MONGO_URI or not SECRET_KEY:
-    print("⚠️ Warning: Missing MONGO_URI or SECRET_KEY environment variables. Using defaults for development.")
-    # Local/dev fallback (not for production!)
+    print("⚠️ Missing MONGO_URI or SECRET_KEY! Falling back to local dev settings.", file=sys.stderr)
+    # Local/dev fallback (not for production)
     MONGO_URI = "mongodb://localhost:27017/testdb"
     SECRET_KEY = "dev_secret_key"
 
@@ -22,10 +23,19 @@ app.secret_key = SECRET_KEY
 # -------------------------
 # MongoDB Connection
 # -------------------------
-client = MongoClient(MONGO_URI)
-db = client['expense_tracker']  # Database
-users_collection = db['users']
-transactions_collection = db['transactions']
+try:
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    # Get DB from URI (better than hardcoding)
+    db_name = MONGO_URI.rsplit("/", 1)[-1].split("?")[0] or "expense_tracker"
+    db = client[db_name]
+    client.admin.command("ping")  # test connection
+    print("✅ Connected to MongoDB:", db_name)
+except Exception as e:
+    print("❌ MongoDB connection failed:", e, file=sys.stderr)
+    db = None
+
+users_collection = db['users'] if db else None
+transactions_collection = db['transactions'] if db else None
 
 # -------------------------
 # Routes
