@@ -1,41 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-import os
-import sys
 
 app = Flask(__name__)
+app.secret_key = "9f5d3a8c1b2e4d6f7a8b9c0d1e2f3a4b"  # Keep this secure
 
 # -------------------------
-# Environment Variables
+# MongoDB connection
 # -------------------------
-MONGO_URI = os.environ.get("MONGO_URI")
-SECRET_KEY = os.environ.get("SECRET_KEY")
-
-if not MONGO_URI or not SECRET_KEY:
-    print("⚠️ Missing MONGO_URI or SECRET_KEY! Falling back to local dev settings.", file=sys.stderr)
-    # Local/dev fallback (not for production)
-    MONGO_URI = "mongodb://localhost:27017/testdb"
-    SECRET_KEY = "dev_secret_key"
-
-app.secret_key = SECRET_KEY
-
-# -------------------------
-# MongoDB Connection
-# -------------------------
-try:
-    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
-    # Extract DB name from URI or default to expense_tracker
-    db_name = MONGO_URI.rsplit("/", 1)[-1].split("?")[0] or "expense_tracker"
-    db = client[db_name]
-    client.admin.command("ping")  # test connection
-    print("✅ Connected to MongoDB:", db_name)
-except Exception as e:
-    print("❌ MongoDB connection failed:", e, file=sys.stderr)
-    db = None
-
-users_collection = db['users'] if db else None
-transactions_collection = db['transactions'] if db else None
+client = MongoClient("mongodb://localhost:27017/")  # default local MongoDB
+db = client['expense_tracker']  # Database
+users_collection = db['users']
+transactions_collection = db['transactions']
 
 # -------------------------
 # Routes
@@ -92,6 +68,7 @@ def dashboard():
 
     transactions = list(transactions_collection.find({"user_id": session["user_id"]}))
 
+    # Calculate totals
     total_income = sum(t["amount"] for t in transactions if t["type"] == "income")
     total_expense = sum(t["amount"] for t in transactions if t["type"] == "expense")
     total_balance = total_income - total_expense
@@ -151,7 +128,7 @@ def edit_transaction(id):
         flash("Transaction updated!", "success")
         return redirect(url_for("dashboard"))
 
-    return render_template("edit_transaction.html", transaction=transaction)
+    return render_template("edit_expense.html", transaction=transaction)
 
 # Delete Transaction
 @app.route("/delete/<string:id>", methods=["GET", "POST"])
@@ -171,7 +148,7 @@ def delete_transaction(id):
 
     return render_template("delete_transaction.html", transaction=transaction)
 
-# Profile
+# Profile Page
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     if "user_id" not in session:
@@ -200,8 +177,5 @@ def logout():
     flash("Logged out successfully!", "info")
     return redirect(url_for("login"))
 
-# -------------------------
-# Run App
-# -------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
