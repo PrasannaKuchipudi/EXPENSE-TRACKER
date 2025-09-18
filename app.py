@@ -4,9 +4,7 @@ from bson.objectid import ObjectId
 
 app = Flask(__name__)
 app.secret_key = "9f5d3a8c1b2e4d6f7a8b9c0d1e2f3a4b"  # Keep this secure
-import os
-client = MongoClient(os.environ.get("mongodb://localhost:27017/"))
-app.secret_key = os.environ.get("9f5d3a8c1b2e4d6f7a8b9c0d1e2f3a4b")
+
 # -------------------------
 # MongoDB connection
 # -------------------------
