@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-# Use MongoDB Atlas connection string from environment variable
-MONGO_URI = "mongodb+srv://prasannakuchipudi99_db_user:Prasanna%4055@cluster0.fmlug6m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+# Get MongoDB URI from Render Environment Variable
+MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 
 # Select database and collection
@@ -19,6 +19,8 @@ def home():
 @app.route("/add", methods=["POST"])
 def add_user():
     data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
     collection.insert_one(data)
     return jsonify({"message": "User added successfully!"})
 
