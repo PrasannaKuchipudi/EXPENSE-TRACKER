@@ -128,7 +128,7 @@ def edit_transaction(id):
         flash("Transaction updated!", "success")
         return redirect(url_for("dashboard"))
 
-    return render_template("edit_expense.html", transaction=transaction)
+    return render_template("edit_transaction.html", transaction=transaction)
 
 # Delete Transaction
 @app.route("/delete/<string:id>", methods=["GET", "POST"])
